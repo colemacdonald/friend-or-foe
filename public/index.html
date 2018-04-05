@@ -1,5 +1,30 @@
-<html>
-	<body>
-		<p>This is the index</p>
-	</body>
+<!doctype html>
+<html lang='en'>
+    <head>
+        <meta charset='utf-8'>
+        <title>Friends or Foes</title>
+        <!-- Fashion -->
+        <link rel='stylesheet' type='text/css' href='css/style.css'>
+
+        <script src='lib/jquery.min.js'></script>
+        <script src='lib/underscore-min.js'></script>
+        <script src='lib/backbone-min.js'></script>
+        <!-- Scripts -->
+        <script src='js/ViewController.js'></script>
+        <script src='js/Router.js'></script>
+        <script src='js/HomeView.js'></script>
+
+        <!-- Start -->
+        <script>
+            var router = null;
+            $(document).ready(function() {
+                router = new GameRouter();
+                Backbone.history.start();
+            });
+        </script>
+    </head>
+    <body>
+        <span>WARNING: performance issues and browser compatibility issues galore</span>
+        <div class='content'></div>
+    </body>
 </html>
