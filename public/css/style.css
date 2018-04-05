@@ -1,3 +1,13 @@
-span {
-	color:red;
+body {
+	overflow:hidden;
 }
+
+svg {
+	position: absolute;
+	overflow:hidden;
+}
+
+polygon {
+	overflow: hidden;
+}
+

@@ -5,7 +5,8 @@ GameRouter = Backbone.Router.extend({
 		'': 'index'
 	},
 	index: function() {
+		if (this.content) this.content.remove();
 		var el = $('<div></div>').appendTo($('.content'));
-		this.container = new HomeView({ el: el });
+		this.content = new HomeView({ el: el });
 	}
 });
