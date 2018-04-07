@@ -8,4 +8,4 @@ var express = require('express'),
 app.use(express.static(path.join(__dirname, 'public')));
 
 // setup server
-var server = app.listen(1337);
+var server = app.listen(8080);
