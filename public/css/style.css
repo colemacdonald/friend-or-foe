@@ -28,3 +28,15 @@ a {
 	font-weight:bold;
 	text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
 }
+
+img.left {
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+canvas {
+	.left {
+		-webkit-transform: scaleX(-1);
+    	transform: scaleX(-1);
+	}
+}

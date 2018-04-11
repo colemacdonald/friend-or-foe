@@ -4,7 +4,7 @@ GameRouter = Backbone.Router.extend({
 	routes: {
 		'': 'index',
 		'title1': 'title1',
-		'title2': 'title2'
+		'wize': 'wize'
 	},
 	index: function() {
 		if (this.content) this.content.remove();
@@ -16,9 +16,9 @@ GameRouter = Backbone.Router.extend({
 		var el = $('<div></div>').appendTo($('.content'));
 		this.content = new Title1View({ el: el });
 	},
-	title2: function() {
+	wize: function() {
 		if (this.content) this.content.remove();
 		var el = $('<div></div>').appendTo($('.content'));
-		this.content = new Title2View({ el: el });
+		this.content = new WizeView({ el: el });
 	}
 });

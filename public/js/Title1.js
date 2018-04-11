@@ -79,7 +79,7 @@ Title1View = HomeView.extend({
 		for(i = 0; i < 100; i++) {
 			if (game.px > game.plats[i].x && game.px < game.plats[i].x + game.plats[i].w &&
 				game.py > game.plats[i].y && game.py < game.plats[i].y + game.plats[i].h) {
-				game.py = game.plats[i].y - 5;
+				game.py = game.plats[i].y + 20;
 				game.onG = true;
 			}
 		}
