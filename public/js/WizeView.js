@@ -6,15 +6,25 @@ WizeView = HomeView.extend({
 
 		this.game = new WizeGame();
 
-		this.addComponent('svg viewBox="0 0 100 100"', 100, 100, 0, 0, '<rect width="100" height="25" style="fill:slategrey;"/><polygon points="0,0 0,100 50,100" style="fill:black;" />');
-		this.addComponent('div class="game-title"', 5, 100, 5, 5, 'Adventures of the Wize');
+		this.viewportH = 600;
+		this.viewportW = 1200;
+		this.viewportY = this.game.getMainCharacter().x - 100;
+		this.viewportX = this.game.getMainCharacter().y - 100;
 
-		var html = '<canvas class="game-canvas" height="' + this.game.drawHeight + 'px" width="' + this.game.drawWidth + 'px" style="border: 1px solid black; top:150px; left:100px; position:absolute;"></canvas>';
+		// Background
+		this.addComponent('svg viewBox="0 0 100 100"', 100, 100, 0, 0, '<rect width="100" height="25" style="fill:slategrey;"/><polygon points="0,0 0,100 50,100" style="fill:black;" />');
+		// Title
+		this.addComponent('div class="game-title"', 5, 100, 1, 1, 'Adventures of the Wize');
+
+		// Canvas
+		var html = '<canvas class="game-canvas" height="' + this.viewportH + 'px" width="' + this.viewportW + 'px" style="border: 1px solid black; top:50px; left:20px; position:absolute;"></canvas>';
 		this.addHtml(html);
-		// this.addHtml('<img src="rsc/kyell-still.png"/>');
 		this.startGame();
 	},
-	// Starts the game
+
+	/*
+	 * Gets the canvas context and initializes events
+	 */
 	startGame: function() {
 		this.canvas = this.$('.game-canvas');
 
@@ -24,15 +34,17 @@ WizeView = HomeView.extend({
 		document.addEventListener("keydown", this.keydown);
 	},
 	onClose: function() {
+		// be sure to remove document listeners to avoid leaks
 		document.removeEventListener("keyup", this.keyup);
 		document.removeEventListener("keydown", this.keydown);
 	},
-	// Draws based on current game state
-	drawGame: function() {
-		var plats = this.game.getDrawablePlatforms(),
-			monsters = this.game.getDrawableMonsters(),
-			coins = this.game.getDrawableCoins();
 
+
+
+	/*
+	 * Calls various draw functions in order
+	 */
+	drawGame: function() {
 		if (!this.game.playerAlive) {
 			this.$el.html('Game over');
 		}
@@ -41,47 +53,146 @@ WizeView = HomeView.extend({
 		this.cntx.fillStyle = "lightblue";
 		this.cntx.fillRect(0, 0, this.canvas.width(), this.canvas.height());
 
-		// Draw platforms
-		this.cntx.fillStyle = "black";
-		_.each(plats, function(plat) {
-			this.cntx.fillRect(plat.x, plat.y, plat.w, plat.h);
-		}, this);
+		// Draw platforms (which are currently coded to hav width of 50 that are >= 100)
+		this.drawPlatforms();
 
 		// Monsters
-		this.cntx.fillStyle = "orange";
-		_.each(monsters, function(monster) {
-			this.cntx.fillRect(monster.x, monster.y, monster.w, monster.h);
-		}, this);
+		this.drawMonsters();
 
 		// Coins
-		this.cntx.fillStyle = 'yellow';
-		_.each(coins, function(coin) {
-			this.cntx.beginPath();
-			this.cntx.arc(coin.x, coin.y, coin.r, 0, 2 * Math.PI, false);
-	    	this.cntx.fill();
-  		}, this);
+		this.drawCoins();
 
-
-		// // Player
-		var c = this.game.getMainCharacter();
-		var img = new Image();
-		img.src = 'rsc/kyell-still.png';
-		this.cntx.drawImage( img , c.x - this.game.viewx, c.y - this.game.viewy);
-		
-		// this.cntx.fillStyle = 'purple';
-		// this.cntx.fillRect(c.x - this.game.viewx, c.y - this.game.viewy, c.w, c.h);
+		// Player
+		this.drawPlayer();
 
 		// Score
 		this.cntx.fillStyle = "red";
 		this.cntx.font = "30px Arial"
 		this.cntx.fillText('Score: ' + this.game.score, 10, 30);
-
 	},
-	//Periodical
+
+
+
+	/*
+	 * Draws each platform that exists inside the viewport at its position offset the viewport
+	 */
+	drawPlatforms: function() {
+		var plats = this.game.platforms;
+
+		_.each(plats, function(plat) {
+			// If visible
+			if (util.doRectanglesOverlap(this.viewportX, this.viewportY, this.viewportH, this.viewportW, plat.x, plat.y, plat.h, plat.w)) {
+				var x = plat.x;
+
+				// Left corner
+				var left = new Image();
+				left.src = TILES.grass_left;
+				this.cntx.drawImage( left , plat.x - this.viewportX, plat.y - this.viewportY, TILES.w, TILES.h);
+
+				// Middle tiles
+				var mid = new Image();
+				mid.src = TILES.grass_mid;
+
+				var i = 1;
+				// Until we reach the right side
+				while ((i+1)*TILES.w < plat.w) {
+					this.cntx.drawImage( mid, plat.x + TILES.w*i - this.viewportX, plat.y - this.viewportY, TILES.w, TILES.h);
+
+					i++;
+				}
+
+				// Right corner
+				var right = new Image();
+				right.src = TILES.grass_right;
+				this.cntx.drawImage( right, plat.x + TILES.w*i - this.viewportX, plat.y - this.viewportY, TILES.w, TILES.h);
+			}
+		}, this);
+	},
+
+
+	/*
+	 * Draws each monster that exists inside the viewport at its position offset the viewport
+	 */
+	drawMonsters: function() {
+		var monsters = this.game.monsters;
+
+		this.cntx.fillStyle = "orange";
+		_.each(monsters, function(monster) {
+			if (util.doRectanglesOverlap(this.viewportX, this.viewportY, this.viewportH, this.viewportW, 
+				monster.x, monster.y, monster.h, monster.w)) {
+				this.cntx.fillRect(monster.x - this.viewportX, monster.y - this.viewportY, monster.w, monster.h);
+			}
+		}, this);
+	},
+
+
+	/*
+	 * Draws each coin that exists inside the viewport at its position offset the viewport
+	 */
+	drawCoins: function() {
+		var coins = this.game.coins;
+
+		this.cntx.fillStyle = 'yellow';
+		_.each(coins, function(coin) {
+			if (util.doRectanglesOverlap(this.viewportX, this.viewportY, this.viewportH, this.viewportW, 
+				coin.x - coin.r, coin.y - coin.r, 2*coin.r, 2*coin.r)) {
+
+				this.cntx.beginPath();
+				this.cntx.arc(coin.x - this.viewportX, coin.y - this.viewportY, coin.r, 0, 2 * Math.PI, false);
+		    	this.cntx.fill();
+		    }
+  		}, this);
+	},
+
+
+
+	/*
+	 * Draws the player at its position offset the viewport
+	 */
+	drawPlayer: function() {
+		var c = this.game.getMainCharacter();
+		var img = new Image();
+		img.src = c.getFrame();
+		this.cntx.drawImage( img , c.x - this.viewportX, c.y - this.viewportY, c.w, c.h);
+		
+		// this.cntx.fillStyle = 'purple';
+		// this.cntx.fillRect(c.x - this.game.viewx, c.y - this.game.viewy, c.w, c.h);
+	},
+
+
+	/*
+	 * To be called at the frame rate.
+	 * 
+	 */
 	update: function() {
 		this.game.update();
 		this.drawGame();
+		this.updateViewport();
 	},
+
+
+	/*
+	 * Update the viewport if the character gets too close to the edge
+	 */
+	updateViewport: function() {
+		var c = this.game.getMainCharacter();
+		if (c.x < this.viewportX + 0.3 * this.viewportW) {
+			this.viewportX = c.x - 0.3 * this.viewportW;
+		} else if (c.x > this.viewportX + 0.7 * this.viewportW) { 
+			this.viewportX = c.x - 0.7 * this.viewportW;
+		}
+
+		if (c.y < this.viewportY + 0.35 * this.viewportH) {
+			this.viewportY = c.y - 0.35 * this.viewportH;
+		} else if (c.y > this.viewportY + 0.65 * this.viewportH) {
+			this.viewportY = c.y - 0.65 * this.viewportH;
+		}
+	},
+
+
+	/**
+	 * EVENTS
+	 */
 	keyup: function(e) {
 		switch (e.keyCode) {
 			case 37:

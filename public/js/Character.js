@@ -9,12 +9,18 @@ CHAR_YEEZY = {
 			hitboxes: []
 		}
 	}
-}
+};
 
 CHARACTER_STATES = {
 	IDLE: 'IDLE',
-	IDLE_LEFT: 'IDLE_LEFT'
-}
+	IDLE_LEFT: 'IDLE_LEFT',
+	IDLE_RIGHT: 'IDLE_RIGHT'
+};
+
+DIRECTIONS = {
+	RIGHT: 'RIGHT',
+	LEFT: 'LEFT'
+};
 
 
 /**
@@ -50,6 +56,11 @@ class Character {
 		this.hurtBoxes = []; // List of rectangles relative to px,py
 		this.hitBoxes = []; // List of rectangles relative to px,py
 		this.currentPlatform = null;
+
+
+		// Animation
+		this.direction = DIRECTIONS.RIGHT;
+		this.frameCounter = 0;
 	}
 
 	// Called when game determines that you are on a platform
@@ -84,11 +95,11 @@ class Character {
 	}
 
 	nextFrame() {
-		/** IMPLEMENT **/
+		/** TO OVERRIDE **/
 	}
 
 	getFrame() {
-		/** IMPLEMENT **/
+
 	}
 
 	getHurtBoxes() {
@@ -110,6 +121,7 @@ class Character {
 	// To make characters do weird things, override these functions!
 	leftPress() {
 		this.movingLeft = true;
+		this.direction = DIRECTIONS.LEFT;
 	}
 
 	leftRelease() {
@@ -118,6 +130,7 @@ class Character {
 
 	rightPress() {
 		this.movingRight = true;
+		this.direction = DIRECTIONS.RIGHT;
 	}
 
 	rightRelease() {
@@ -126,7 +139,7 @@ class Character {
 
 	upPress() {
 		if (this.jmpCnt < 1) { 
-			this.yv = -7;
+			this.yv = -10;
 			this.jmpCnt++;
 		}
 	}
@@ -150,21 +163,23 @@ class Character {
 class KYeezy extends Character {
 	constructor(options) {
 		options = options || {};
-		options.h = 50;
-		options.w = 25;
+
+		options.h = 80;
+		options.w = 40;
+
 		// Call super class constructor
 		super(options);
 
-		this.hurtBoxes = [{ x: 0, y:0, h:50, w:25 }];
+		// Based of top 
+		this.hurtBoxes = [{ x: 5, y:10, h:70, w:30 }];
 		this.hitBoxes = [];
-		this.state = options.state ? options.state : CHARACTER_STATES.IDLE;
 	}
 
 	getFrame() {
-		return CHAR_YEEZY.frames.standard_right;
-	}
-
-	nextFrame() {
-
+		if (this.direction === DIRECTIONS.LEFT) {
+			return 'rsc/kyell_still_left.png';
+		} else {
+			return 'rsc/kyell_still_right.png';
+		}
 	}
 }
