@@ -76,6 +76,9 @@ class WizeGame {
 		// slow down or fall
 		if (this.onGround) {
 			this.character.xv *= 0.5;
+			if ( this.character.xv < 0.5 ) {
+				this.character.xv = 0;
+			}
 		} else {
 			this.character.yv += this.grav;
 		}

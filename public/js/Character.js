@@ -11,16 +11,83 @@ CHAR_YEEZY = {
 	}
 };
 
-CHARACTER_STATES = {
-	IDLE: 'IDLE',
-	IDLE_LEFT: 'IDLE_LEFT',
-	IDLE_RIGHT: 'IDLE_RIGHT'
+DIRECTIONS = {
+	RIGHT: 'right',
+	LEFT: 'left'
 };
 
-DIRECTIONS = {
-	RIGHT: 'RIGHT',
-	LEFT: 'LEFT'
+STATES = {
+	IDLE: {
+		max_count: 7,
+		right: [],
+		left: []
+	},
+	WALKING: {
+		x_offset: 40,
+		right: [
+			'rsc/kyell_walk/kyell_walk_hairmove0000.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0000.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0001.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0001.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0002.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0002.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0003.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0003.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0004.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0004.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0005.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0005.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0006.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0006.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0007.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0007.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0008.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0008.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0009.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0009.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0010.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0010.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0011.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0011.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0012.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0012.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0013.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0013.png'
+		],
+		left: [
+			'rsc/kyell_walk/kyell_walk_hairmove0000.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0001.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0002.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0003.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0004.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0005.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0006.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0007.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0008.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0009.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0010.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0011.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0012.png',
+			'rsc/kyell_walk/kyell_walk_hairmove0013.png'
+		]
+	},
+	JUMPING: {
+		max_count: 7,
+		right: [],
+		left: []
+	},
+	INAIR: {
+		max_count: 7,
+		right: [],
+		left: []
+	},
+	JUMPING: {
+		max_count: 7,
+		right: [],
+		left: []
+	}
 };
+
 
 
 /**
@@ -166,6 +233,7 @@ class KYeezy extends Character {
 
 		options.h = 80;
 		options.w = 40;
+		
 
 		// Call super class constructor
 		super(options);
@@ -176,10 +244,24 @@ class KYeezy extends Character {
 	}
 
 	getFrame() {
+		var frameGroup,
+			direction;
+			
+			
+		// Find group
+		if (this.onG && this.xv !== 0) {
+			frameGroup = STATES.WALKING;
+			
+			// Update counter
+			this.frameCounter = (this.frameCounter + 1) % frameGroup[this.direction].length;
+			return { src: frameGroup[this.direction][this.frameCounter], x_offset: frameGroup.x_offset };
+		}
+		
+		
 		if (this.direction === DIRECTIONS.LEFT) {
-			return 'rsc/kyell_still_left.png';
+			return { src: 'rsc/kyell_still_left.png', x_offset: 0 };
 		} else {
-			return 'rsc/kyell_still_right.png';
+			return { src: 'rsc/kyell_still_right.png', x_offset: 0 };
 		}
 	}
 }

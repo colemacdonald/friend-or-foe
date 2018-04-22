@@ -29,6 +29,7 @@ WizeView = HomeView.extend({
 		this.canvas = this.$('.game-canvas');
 
 		this.cntx = this.canvas[0].getContext('2d');
+		this.cntx.imageSmoothingEnabled = false;
 		setInterval(this.update, 1000/this.game.fps);
 		document.addEventListener("keyup", this.keyup);
 		document.addEventListener("keydown", this.keydown);
@@ -150,10 +151,11 @@ WizeView = HomeView.extend({
 	 * Draws the player at its position offset the viewport
 	 */
 	drawPlayer: function() {
-		var c = this.game.getMainCharacter();
-		var img = new Image();
-		img.src = c.getFrame();
-		this.cntx.drawImage( img , c.x - this.viewportX, c.y - this.viewportY, c.w, c.h);
+		var c = this.game.getMainCharacter(),
+			frame = c.getFrame(),
+			img = new Image();
+		img.src = frame.src;
+		this.cntx.drawImage( img , c.x - this.viewportX - frame.x_offset, c.y - this.viewportY, c.w + frame.x_offset, c.h);
 		
 		// this.cntx.fillStyle = 'purple';
 		// this.cntx.fillRect(c.x - this.game.viewx, c.y - this.game.viewy, c.w, c.h);
