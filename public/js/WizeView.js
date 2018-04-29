@@ -28,6 +28,8 @@ WizeView = HomeView.extend({
 	startGame: function() {
 		this.canvas = this.$('.game-canvas');
 
+		this.bootstrapCoinImages();
+		
 		this.cntx = this.canvas[0].getContext('2d');
 		this.cntx.imageSmoothingEnabled = false;
 		setInterval(this.update, 1000/this.game.fps);
@@ -38,6 +40,14 @@ WizeView = HomeView.extend({
 		// be sure to remove document listeners to avoid leaks
 		document.removeEventListener("keyup", this.keyup);
 		document.removeEventListener("keydown", this.keydown);
+	},
+	bootstrapCoinImages: function() {
+		_.each(COIN_FRAMES.sources, function(src) {
+			var img = new Image();
+			img.src = src;
+			
+			COIN_FRAMES.images.push(img);
+		});
 	},
 
 
@@ -139,10 +149,9 @@ WizeView = HomeView.extend({
 		_.each(coins, function(coin) {
 			if (util.doRectanglesOverlap(this.viewportX, this.viewportY, this.viewportH, this.viewportW, 
 				coin.x - coin.r, coin.y - coin.r, 2*coin.r, 2*coin.r)) {
-
-				this.cntx.beginPath();
-				this.cntx.arc(coin.x - this.viewportX, coin.y - this.viewportY, coin.r, 0, 2 * Math.PI, false);
-		    	this.cntx.fill();
+				
+				var index = coin.getImageIndex();
+				this.cntx.drawImage(COIN_FRAMES.images[index], coin.x - coin.r - this.viewportX, coin.y - coin.r - this.viewportY, coin.r * 2, coin.r * 2);
 		    }
   		}, this);
 	},
@@ -155,7 +164,8 @@ WizeView = HomeView.extend({
 	drawPlayer: function() {
 		var c = this.game.getMainCharacter(),
 			frame = c.getFrame();
-		this.cntx.drawImage( frame.img , c.x - this.viewportX - frame.x_offset, c.y - this.viewportY, c.w + frame.x_offset, c.h);
+			// drawImage(img, x, y, w, h)
+		this.cntx.drawImage( frame.img , c.x - this.viewportX + frame.x_offset, c.y - this.viewportY, c.w + frame.width_extend, c.h);
 		
 		// this.cntx.fillStyle = 'purple';
 		// this.cntx.fillRect(c.x - this.game.viewx, c.y - this.game.viewy, c.w, c.h);

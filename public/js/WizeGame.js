@@ -47,11 +47,10 @@ class WizeGame {
 		}
 
 		for (var i = 0; i < 20; i++) {
-			this.coins.push({
+			this.coins.push(new Coin({
 				x: Math.random() * this.width,
-				y: Math.random() * this.height,
-				r: 15
-			});
+				y: Math.random() * this.height
+			}));
 		}
 	}
 

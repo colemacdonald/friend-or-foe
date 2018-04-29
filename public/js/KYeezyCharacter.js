@@ -18,18 +18,18 @@ class KYeezy extends ControllableCharacter {
 
 		// Bootstrap Images
 		_.each(STATES, function(state) {
-			state.right = [];
-			_.each(state.rightSources, function(imgSrc){
+			state.right.images = [];
+			_.each(state.right.sources, function(imgSrc){
 				var img = new Image();
 				img.src = imgSrc;
-				state.right.push(img);
+				state.right.images.push(img);
 			});
 
-			state.left = [];
-			_.each(state.leftSources, function(imgSrc){
+			state.left.images = [];
+			_.each(state.left.sources, function(imgSrc){
 				var img = new Image();
 				img.src = imgSrc;
-				state.left.push(img);
+				state.left.images.push(img);
 			});
 		});
 	}
@@ -41,104 +41,145 @@ class KYeezy extends ControllableCharacter {
 			
 		// Find group
 		if (this.onG && this.xv !== 0) {
+			
 			frameGroup = STATES.WALKING;
 			
 			// Update counter
-			this.frameCounter = (this.frameCounter + 1) % frameGroup[this.direction].length;
-			return { img: frameGroup[this.direction][this.frameCounter], x_offset: frameGroup.x_offset };
+			this.frameCounter = (this.frameCounter + 1) % frameGroup[this.direction].images.length;
+			return { img: frameGroup[this.direction].images[this.frameCounter], x_offset: frameGroup[this.direction].x_offset, width_extend: frameGroup[this.direction].width_extend };
 		}
 		
 		
 		if (this.direction === DIRECTIONS.LEFT) {
 			var img = new Image();
 			img.src = 'rsc/kyell_still_left.png';
-			return { img: img, x_offset: 0 };
+			return { img: img, x_offset: 0, width_extend: 0 };
 		} else {
 			var img = new Image();
 			img.src = 'rsc/kyell_still_right.png';
-			return { img: img, x_offset: 0 };
+			return { img: img, x_offset: 0, width_extend: 0 };
 		}
 	}
 }
 
 STATES = {
 	IDLE: {
-		rightSources: [],
-		leftSources: []
+		right: {
+			sources: [],
+			images: [],
+			x_offset: 0
+		},
+		left: {
+			sources: [],
+			images: [],
+			x_offset: 0
+		}
 	},
 	WALKING: {
-		x_offset: 41,
-		rightSources: [
-			'rsc/kyell_walk/kyell_walk_hairmove_right0000.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0000.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0001.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0001.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0002.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0002.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0003.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0003.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0004.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0004.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0005.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0005.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0006.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0006.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0007.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0007.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0008.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0008.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0009.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0009.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0010.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0010.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0011.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0011.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0012.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0012.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0013.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_right0013.png'
-		],
-		leftSources: [
-			'rsc/kyell_walk/kyell_walk_hairmove_left0000.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0000.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0001.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0001.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0002.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0002.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0003.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0003.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0004.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0004.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0005.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0005.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0006.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0006.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0007.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0007.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0008.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0008.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0009.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0009.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0010.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0010.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0011.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0011.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0012.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0012.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0013.png',
-			'rsc/kyell_walk/kyell_walk_hairmove_left0013.png'
-		]
+		right: {
+			x_offset: -41,
+			width_extend: 41,
+			sources: [
+				'rsc/kyell_walk/kyell_walk_hairmove_right0000.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0000.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0001.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0001.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0002.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0002.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0003.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0003.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0004.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0004.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0005.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0005.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0006.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0006.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0007.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0007.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0008.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0008.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0009.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0009.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0010.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0010.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0011.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0011.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0012.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0012.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0013.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_right0013.png'
+			],
+			images: []
+		},
+		left: {
+			x_offset: 0,
+			width_extend: 41,
+			sources: [
+				'rsc/kyell_walk/kyell_walk_hairmove_left0000.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0000.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0001.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0001.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0002.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0002.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0003.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0003.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0004.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0004.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0005.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0005.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0006.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0006.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0007.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0007.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0008.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0008.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0009.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0009.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0010.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0010.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0011.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0011.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0012.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0012.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0013.png',
+				'rsc/kyell_walk/kyell_walk_hairmove_left0013.png'
+			]
+		},
 	},
 	JUMPING: {
-		rightSources: [],
-		leftSources: []
+		right: {
+			sources: [],
+			images: [],
+			x_offset: 0
+		},
+		left: {
+			sources: [],
+			images: [],
+			x_offset: 0
+		}
 	},
 	INAIR: {
-		rightSources: [],
-		leftSources: []
+		right: {
+			sources: [],
+			images: [],
+			x_offset: 0
+		},
+		left: {
+			sources: [],
+			images: [],
+			x_offset: 0
+		}
 	},
 	JUMPING: {
-		rightSources: [],
-		leftSources: []
+		right: {
+			sources: [],
+			images: [],
+			x_offset: 0
+		},
+		left: {
+			sources: [],
+			images: [],
+			x_offset: 0
+		}
 	}
 };
