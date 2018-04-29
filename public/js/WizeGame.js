@@ -9,9 +9,6 @@ class WizeGame {
 		this.fps = 60;
 		this.speed = 3;
 
-		this.character = new KYeezy();
-		this.character.setPosition(100, 1300);
-
 		this.platforms = [{x:0, y:1500, h:150 ,w:2000}];
 		this.monsters = [];
 		this.coins = [];
@@ -23,6 +20,9 @@ class WizeGame {
 
 		this.height = 1500;
 		this.width = 1500;
+
+		this.character = new KYeezy({ game: this });
+		this.character.setPosition(100, 1300);
 
 		while (this.platforms.length < 50) {
 			var newPlat = {
@@ -72,16 +72,8 @@ class WizeGame {
 			}
 		}, this);
 
-
-		// slow down or fall
-		if (this.onGround) {
-			this.character.xv *= 0.5;
-			if ( this.character.xv < 0.5 ) {
-				this.character.xv = 0;
-			}
-		} else {
-			this.character.yv += this.grav;
-		}
+		// Move
+		this.character.move();
 
 		_.each(this.monsters, function(monster) {
 			if (util.doRectangleArraysOverlap(this.character.getHurtBoxes(), 
@@ -103,9 +95,6 @@ class WizeGame {
 			this.score += 100;
 			this.coins.splice(indices[i], 1);
 		}
-
-		// Move
-		this.character.move();
 
 		// Don't let character fall below stage
 		if (this.character.y > this.height) this.character.y = this.platforms[0].y - this.character.h - 5;

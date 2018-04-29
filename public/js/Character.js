@@ -1,91 +1,8 @@
 //Player.js
 
-CHAR_YEEZY = {
-	speed: 3,
-	frames: {
-		'IDLE': {
-			img_src: 'rsc/kyell-still.png',
-			hurtboxes: [{x: 0, y:0, w: 25, h: 50}],
-			hitboxes: []
-		}
-	}
-};
-
 DIRECTIONS = {
 	RIGHT: 'right',
 	LEFT: 'left'
-};
-
-STATES = {
-	IDLE: {
-		max_count: 7,
-		right: [],
-		left: []
-	},
-	WALKING: {
-		x_offset: 40,
-		right: [
-			'rsc/kyell_walk/kyell_walk_hairmove0000.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0000.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0001.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0001.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0002.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0002.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0003.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0003.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0004.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0004.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0005.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0005.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0006.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0006.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0007.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0007.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0008.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0008.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0009.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0009.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0010.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0010.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0011.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0011.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0012.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0012.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0013.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0013.png'
-		],
-		left: [
-			'rsc/kyell_walk/kyell_walk_hairmove0000.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0001.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0002.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0003.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0004.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0005.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0006.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0007.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0008.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0009.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0010.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0011.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0012.png',
-			'rsc/kyell_walk/kyell_walk_hairmove0013.png'
-		]
-	},
-	JUMPING: {
-		max_count: 7,
-		right: [],
-		left: []
-	},
-	INAIR: {
-		max_count: 7,
-		right: [],
-		left: []
-	},
-	JUMPING: {
-		max_count: 7,
-		right: [],
-		left: []
-	}
 };
 
 
@@ -93,12 +10,13 @@ STATES = {
 /**
  * To be used as a base class for creating new characters - mainly to allow the implementation though I'm not sure 
  * we are going to need this level of abstraction but just incase
+ * Call the super class constructor if your are extending this class
  */
 class Character {
 
 	constructor(options) {
-		// Options are optional
-		options = options || {};
+		// Options must contain the game object
+		this.game = options.game;
 
 		// Positioning and Movement
 		this.x = options.x ? options.x : 0;
@@ -108,8 +26,7 @@ class Character {
 
 		this.xv = options.xv ? options.xv : 0;
 		this.yv = options.yv ? options.yv : 0;
-		this.grav = options.grav ? options.grav : 0.5;
-		this.speed = 3;
+		this.speed = options.speed ? options.speed : 3;
 
 		// Status and Inputs
 		this.onG = false;
@@ -136,8 +53,6 @@ class Character {
 		this.y = plat.y - this.h;
 		this.onG = true;
 		this.jmpCnt = 0;
-
-		if (this.fall) this.y = plat.y + plat.h + 5;
 	}
 
 	setPosition(x, y) {
@@ -150,20 +65,36 @@ class Character {
 		this.yv = yv;
 	}
 
+	/**
+	 *	very basic move function, overwrite if necessary
+	 */
 	move() {
+		// Are you moving
 		if(this.movingLeft) {
 			this.xv = -this.speed;
 		} else if (this.movingRight) {
 			this.xv = this.speed;
 		}
 
+		// slow down or fall
+		if (this.onG) {
+			this.xv *= 0.5;
+			if ( Math.abs(this.xv) < 0.5 ) {
+				this.xv = 0;
+			}
+		} else {
+			this.yv += this.game.grav;
+		}
+
 		this.x += this.xv;
 		this.y += this.yv;
+
+		if (this.fall && this.currentPlatform) {
+			this.y = this.currentPlatform.y + this.currentPlatform.h - 5;
+			this.currentPlatform = null;
+		}
 	}
 
-	nextFrame() {
-		/** TO OVERRIDE **/
-	}
 
 	getFrame() {
 
@@ -183,9 +114,16 @@ class Character {
 
 		return hurtBoxes;
 	}
+}
 
-	/************* CONTROLS **************/
-	// To make characters do weird things, override these functions!
+class ControllableCharacter extends Character {
+
+	constructor(options) {
+		super(options);
+	}
+
+		/************* CONTROLS **************/
+	// To make characters do weird things, edit these functions!
 	leftPress() {
 		this.movingLeft = true;
 		this.direction = DIRECTIONS.LEFT;
@@ -223,45 +161,5 @@ class Character {
 
 	downRelease() {
 		this.fall = false;
-	}
-}
-
-
-class KYeezy extends Character {
-	constructor(options) {
-		options = options || {};
-
-		options.h = 80;
-		options.w = 40;
-		
-
-		// Call super class constructor
-		super(options);
-
-		// Based of top 
-		this.hurtBoxes = [{ x: 5, y:10, h:70, w:30 }];
-		this.hitBoxes = [];
-	}
-
-	getFrame() {
-		var frameGroup,
-			direction;
-			
-			
-		// Find group
-		if (this.onG && this.xv !== 0) {
-			frameGroup = STATES.WALKING;
-			
-			// Update counter
-			this.frameCounter = (this.frameCounter + 1) % frameGroup[this.direction].length;
-			return { src: frameGroup[this.direction][this.frameCounter], x_offset: frameGroup.x_offset };
-		}
-		
-		
-		if (this.direction === DIRECTIONS.LEFT) {
-			return { src: 'rsc/kyell_still_left.png', x_offset: 0 };
-		} else {
-			return { src: 'rsc/kyell_still_right.png', x_offset: 0 };
-		}
 	}
 }

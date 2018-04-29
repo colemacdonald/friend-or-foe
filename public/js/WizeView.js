@@ -50,6 +50,8 @@ WizeView = HomeView.extend({
 			this.$el.html('Game over');
 		}
 
+		this.cntx.clearRect(0, 0, this.canvas.width(), this.canvas.height());
+
 		// Background
 		this.cntx.fillStyle = "lightblue";
 		this.cntx.fillRect(0, 0, this.canvas.width(), this.canvas.height());
