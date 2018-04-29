@@ -79,6 +79,8 @@ class Character {
 		// slow down or fall
 		if (this.onG) {
 			this.xv *= 0.5;
+			
+			// Animation won't stop properly other wise
 			if ( Math.abs(this.xv) < 0.5 ) {
 				this.xv = 0;
 			}

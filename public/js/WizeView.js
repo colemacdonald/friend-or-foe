@@ -154,10 +154,8 @@ WizeView = HomeView.extend({
 	 */
 	drawPlayer: function() {
 		var c = this.game.getMainCharacter(),
-			frame = c.getFrame(),
-			img = new Image();
-		img.src = frame.src;
-		this.cntx.drawImage( img , c.x - this.viewportX - frame.x_offset, c.y - this.viewportY, c.w + frame.x_offset, c.h);
+			frame = c.getFrame();
+		this.cntx.drawImage( frame.img , c.x - this.viewportX - frame.x_offset, c.y - this.viewportY, c.w + frame.x_offset, c.h);
 		
 		// this.cntx.fillStyle = 'purple';
 		// this.cntx.fillRect(c.x - this.game.viewx, c.y - this.game.viewy, c.w, c.h);

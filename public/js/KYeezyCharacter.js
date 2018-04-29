@@ -16,8 +16,22 @@ class KYeezy extends ControllableCharacter {
 		this.hurtBoxes = [{ x: 5, y:10, h:70, w:30 }];
 		this.hitBoxes = [];
 
-		// Images
-		// TODO: COLE: bootstrap character frames
+		// Bootstrap Images
+		_.each(STATES, function(state) {
+			state.right = [];
+			_.each(state.rightSources, function(imgSrc){
+				var img = new Image();
+				img.src = imgSrc;
+				state.right.push(img);
+			});
+
+			state.left = [];
+			_.each(state.leftSources, function(imgSrc){
+				var img = new Image();
+				img.src = imgSrc;
+				state.left.push(img);
+			});
+		});
 	}
 
 	getFrame() {
@@ -31,26 +45,30 @@ class KYeezy extends ControllableCharacter {
 			
 			// Update counter
 			this.frameCounter = (this.frameCounter + 1) % frameGroup[this.direction].length;
-			return { src: frameGroup[this.direction][this.frameCounter], x_offset: frameGroup.x_offset };
+			return { img: frameGroup[this.direction][this.frameCounter], x_offset: frameGroup.x_offset };
 		}
 		
 		
 		if (this.direction === DIRECTIONS.LEFT) {
-			return { src: 'rsc/kyell_still_left.png', x_offset: 0 };
+			var img = new Image();
+			img.src = 'rsc/kyell_still_left.png';
+			return { img: img, x_offset: 0 };
 		} else {
-			return { src: 'rsc/kyell_still_right.png', x_offset: 0 };
+			var img = new Image();
+			img.src = 'rsc/kyell_still_right.png';
+			return { img: img, x_offset: 0 };
 		}
 	}
 }
 
 STATES = {
 	IDLE: {
-		right: [],
-		left: []
+		rightSources: [],
+		leftSources: []
 	},
 	WALKING: {
 		x_offset: 41,
-		right: [
+		rightSources: [
 			'rsc/kyell_walk/kyell_walk_hairmove_right0000.png',
 			'rsc/kyell_walk/kyell_walk_hairmove_right0000.png',
 			'rsc/kyell_walk/kyell_walk_hairmove_right0001.png',
@@ -80,7 +98,7 @@ STATES = {
 			'rsc/kyell_walk/kyell_walk_hairmove_right0013.png',
 			'rsc/kyell_walk/kyell_walk_hairmove_right0013.png'
 		],
-		left: [
+		leftSources: [
 			'rsc/kyell_walk/kyell_walk_hairmove_left0000.png',
 			'rsc/kyell_walk/kyell_walk_hairmove_left0000.png',
 			'rsc/kyell_walk/kyell_walk_hairmove_left0001.png',
@@ -112,15 +130,15 @@ STATES = {
 		]
 	},
 	JUMPING: {
-		right: [],
-		left: []
+		rightSources: [],
+		leftSources: []
 	},
 	INAIR: {
-		right: [],
-		left: []
+		rightSources: [],
+		leftSources: []
 	},
 	JUMPING: {
-		right: [],
-		left: []
+		rightSources: [],
+		leftSources: []
 	}
 };
