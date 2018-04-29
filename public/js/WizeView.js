@@ -53,7 +53,7 @@ WizeView = HomeView.extend({
 		this.cntx.clearRect(0, 0, this.canvas.width(), this.canvas.height());
 
 		// Background
-		this.cntx.fillStyle = "lightblue";
+		this.cntx.fillStyle = '#33beff';
 		this.cntx.fillRect(0, 0, this.canvas.width(), this.canvas.height());
 
 		// Draw platforms (which are currently coded to hav width of 50 that are >= 100)
