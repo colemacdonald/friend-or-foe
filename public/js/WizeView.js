@@ -4,12 +4,10 @@ WizeView = HomeView.extend({
 	initialize: function() {
 		_.bindAll(this, 'update', 'keyup', 'keydown');
 
-		this.game = new WizeGame();
-
 		this.viewportH = 600;
 		this.viewportW = 1200;
-		this.viewportY = this.game.getMainCharacter().x - 100;
-		this.viewportX = this.game.getMainCharacter().y - 100;
+		this.viewportY = 0;
+		this.viewportX = 0;
 
 		// Background
 		this.addComponent('svg viewBox="0 0 100 100"', 100, 100, 0, 0, '<rect width="100" height="25" style="fill:slategrey;"/><polygon points="0,0 0,100 50,100" style="fill:black;" />');
@@ -19,6 +17,10 @@ WizeView = HomeView.extend({
 		// Canvas
 		var html = '<canvas class="game-canvas" height="' + this.viewportH + 'px" width="' + this.viewportW + 'px" style="border: 1px solid black; top:50px; left:20px; position:absolute;"></canvas>';
 		this.addHtml(html);
+		
+		this.bootstrapCoinImages();
+		
+		this.games = 0;
 		this.startGame();
 	},
 
@@ -26,13 +28,21 @@ WizeView = HomeView.extend({
 	 * Gets the canvas context and initializes events
 	 */
 	startGame: function() {
+		if (this.game) delete this.game;
+		
+		this.game = new WizeGame();
+		this.viewportY = this.game.getMainCharacter().x - 100;
+		this.viewportX = this.game.getMainCharacter().y - 100;
+		
 		this.canvas = this.$('.game-canvas');
 
-		this.bootstrapCoinImages();
 		
 		this.cntx = this.canvas[0].getContext('2d');
 		this.cntx.imageSmoothingEnabled = false;
-		setInterval(this.update, 1000/this.game.fps);
+		
+		if (this.interval) window.clearInterval(this.interval);
+		this.interval = setInterval(this.update, 1000/this.game.fps);
+		
 		document.addEventListener("keyup", this.keyup);
 		document.addEventListener("keydown", this.keydown);
 	},
@@ -58,6 +68,10 @@ WizeView = HomeView.extend({
 	drawGame: function() {
 		if (!this.game.playerAlive) {
 			this.$el.html('Game over');
+		} else if (this.game.score === 2000) {
+			this.games++;
+			this.startGame();
+			return;
 		}
 
 		this.cntx.clearRect(0, 0, this.canvas.width(), this.canvas.height());
@@ -81,7 +95,7 @@ WizeView = HomeView.extend({
 		// Score
 		this.cntx.fillStyle = "red";
 		this.cntx.font = "30px Arial"
-		this.cntx.fillText('Score: ' + this.game.score, 10, 30);
+		this.cntx.fillText('Games: ' + this.games + ' Score: ' + this.game.score, 10, 30);
 	},
 
 
