@@ -49,7 +49,7 @@ STATES = {
 		left: []
 	},
 	WALKING: {
-		x_offset: 40,
+		x_offset: 41,
 		right: [
 			'rsc/kyell_walk/kyell_walk_hairmove_right0000.png',
 			'rsc/kyell_walk/kyell_walk_hairmove_right0000.png',
