@@ -18,6 +18,7 @@ WizeView = HomeView.extend({
 		var html = '<canvas class="game-canvas" height="' + this.viewportH + 'px" width="' + this.viewportW + 'px" style="border: 1px solid black; top:50px; left:20px; position:absolute;"></canvas>';
 		this.addHtml(html);
 		
+		this.bootstrapPlatformImages();
 		this.bootstrapCoinImages();
 		
 		this.games = 0;
@@ -59,7 +60,21 @@ WizeView = HomeView.extend({
 			COIN_FRAMES.images.push(img);
 		});
 	},
+	bootstrapPlatformImages: function() {
+		var left = new Image(),
+			right = new Image(),
+			center = new Image();
 
+		left.src = TILES.grass_left;
+		right.src = TILES.grass_right;
+		center.src = TILES.grass_mid;
+
+		this.platformImages = {
+			left: left,
+			right: right,
+			center: center
+		}
+	},
 
 
 	/*
@@ -112,26 +127,20 @@ WizeView = HomeView.extend({
 				var x = plat.x;
 
 				// Left corner
-				var left = new Image();
-				left.src = TILES.grass_left;
-				this.cntx.drawImage( left , plat.x - this.viewportX, plat.y - this.viewportY, TILES.w, TILES.h);
+				this.cntx.drawImage( this.platformImages.left , plat.x - this.viewportX, plat.y - this.viewportY, TILES.w, TILES.h);
 
 				// Middle tiles
-				var mid = new Image();
-				mid.src = TILES.grass_mid;
 
 				var i = 1;
 				// Until we reach the right side
 				while ((i+1)*TILES.w < plat.w) {
-					this.cntx.drawImage( mid, plat.x + TILES.w*i - this.viewportX, plat.y - this.viewportY, TILES.w, TILES.h);
+					this.cntx.drawImage( this.platformImages.center, plat.x + TILES.w*i - this.viewportX, plat.y - this.viewportY, TILES.w, TILES.h);
 
 					i++;
 				}
 
 				// Right corner
-				var right = new Image();
-				right.src = TILES.grass_right;
-				this.cntx.drawImage( right, plat.x + TILES.w*i - this.viewportX, plat.y - this.viewportY, TILES.w, TILES.h);
+				this.cntx.drawImage( this.platformImages.right, plat.x + TILES.w*i - this.viewportX, plat.y - this.viewportY, TILES.w, TILES.h);
 			}
 		}, this);
 	},
@@ -143,7 +152,7 @@ WizeView = HomeView.extend({
 	drawMonsters: function() {
 		var monsters = this.game.monsters;
 
-		this.cntx.fillStyle = "orange";
+		this.cntx.fillStyle = 'brown';
 		_.each(monsters, function(monster) {
 			if (util.doRectanglesOverlap(this.viewportX, this.viewportY, this.viewportH, this.viewportW, 
 				monster.x, monster.y, monster.h, monster.w)) {
@@ -182,7 +191,7 @@ WizeView = HomeView.extend({
 		this.cntx.drawImage( frame.img , c.x - this.viewportX + frame.x_offset, c.y - this.viewportY, c.w + frame.width_extend, c.h);
 		
 		// this.cntx.fillStyle = 'purple';
-		// this.cntx.fillRect(c.x - this.game.viewx, c.y - this.game.viewy, c.w, c.h);
+		// this.cntx.fillRect(c.x - this.viewportX, c.y - this.viewportY, c.w, c.h);
 	},
 
 
